@@ -4,12 +4,13 @@ import org.joda.time.DateTime;
 
 public class Post {
 
-	private String link;
+	private String url;
 	private String title;
 	private String html;
 	private DateTime publishedDate;
 	private int faceBookLikes;
 	private int twitterTweets;
+	private Feed feed;
 	
 	public String getHtml() {
 		return html;
@@ -35,16 +36,22 @@ public class Post {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public String getLink() {
-		return link;
-	}
-	public void setLink(String link) {
-		this.link = link;
-	}
 	public DateTime getPublishedDate() {
 		return publishedDate;
 	}
 	public void setPublishedDate(DateTime publishedDate) {
 		this.publishedDate = publishedDate;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public Feed getFeed() {
+		return feed;
+	}
+	public void setFeed(Feed feed) {
+		this.feed = feed;
 	}
 }

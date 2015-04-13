@@ -15,6 +15,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mcnavish.topposts.domain.Feed;
 import com.mcnavish.topposts.domain.Post;
 
 public class RssScraper {
@@ -22,60 +23,75 @@ public class RssScraper {
 	private static Logger logger = LoggerFactory.getLogger(RssScraper.class);
 	
 	private int REQUEST_TIMEOUT_MILLIS = 3000;
-	private DateTimeFormatter FeedBurnerDateFormatter = DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss zzz");  //Mon, 06 Apr 2015 04:00:00 GMT
+	protected String YQL_URL = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20feed%20where%20url=\"[[FEED_URL]]\"";
 
-	public List<Post> getPosts(String feedUrl, DateTime minimumDate){
+	public List<Post> getAllPosts(List<Feed> feeds, DateTime minimumDate){
+		List<Post> posts = new ArrayList<Post>();
+		for(Feed feed : feeds){
+			posts.addAll(getPosts(feed, minimumDate));
+		}
+		
+		return posts;
+	}
+	
+	public List<Post> getPosts(Feed feed, DateTime minimumDate){
 		List<Post> allPosts = new ArrayList<Post>();
 		try{
-			String url = buildYqlUrl(feedUrl);
-			allPosts = extractPosts(url, minimumDate);
+			allPosts = extractPosts(feed, minimumDate);
 		}
-		catch(IOException ex){
+		catch(Exception ex){
 			//TODO: mark feed status as 'error'
 		}
 		
 		return allPosts;
 	}
 	
-	private String buildYqlUrl(String feedUrl){
-		String newUrl = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20feed%20where%20url=\"" + feedUrl + "\"";
+	protected String buildYqlUrl(String feedUrl){
+		String newUrl = YQL_URL.replace("[[FEED_URL]]", feedUrl);
 		return newUrl;
 	}
 
 	
-	protected List<Post> extractPosts(String url, DateTime minimumDate) throws IOException{
+	protected List<Post> extractPosts(Feed feed, DateTime minimumDate) throws IOException, IllegalArgumentException{
 		List<Post> allPosts = new ArrayList<Post>();
 		
 		try{
+			String url = buildYqlUrl( feed.getUrl());
 			URL requestUrl = new URL(url);
 			Document doc = Jsoup.parse(requestUrl, REQUEST_TIMEOUT_MILLIS);
-			
-			Elements channel = doc.select("channel");
+			Elements channel = doc.select("results");
 			if(channel == null || channel.size() == 0){
 				logger.error("channel not found in feed for url: " + url);
 				return allPosts;
 			}
+			
 			Elements items = channel.first().select("item");
+			if(items.isEmpty()){
+				logger.error("no items found in feed for url: " + url);
+				return allPosts;
+			}
+			DateTimeFormatter dateFormatter = DateTimeFormat.forPattern(feed.getDateFormat());
+			
 			for(Element item : items){
 				logger.debug(item.select("title").text() + " pubDate: " + item.select("pubDate").text());				
 				Post post = new Post();
 				post.setTitle(item.select("title").text());
-				post.setLink(item.select("link").text());
+				post.setUrl(item.select("feedburner|origLink").text());
 				post.setHtml(item.select("description").text());
 				String pubDate = item.select("pubDate").text();
-				DateTime dt = FeedBurnerDateFormatter.parseDateTime(pubDate);
+				DateTime dt = dateFormatter.parseDateTime(pubDate);
 				post.setPublishedDate(dt);
+				post.setFeed(feed);
 				allPosts.add(post);
 			}
 			
 		}
-		catch(Exception ex){
+		catch(IOException | IllegalArgumentException ex){
 			logger.error("Error getting posts", ex);
-			throw new IOException("Error getting posts", ex);
+			throw ex;
 		}
 		
 		return allPosts;
 	}
-	
 	
 }

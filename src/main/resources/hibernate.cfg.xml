@@ -6,7 +6,7 @@
 <hibernate-configuration>
 	<session-factory>
 		<property name="connection.driver_class">org.postgresql.Driver</property>
-		<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/davidmcnavish</property>
+		<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/topposts</property>
 		<property name="hibernate.connection.username">davidmcnavish</property>
 		<property name="hibernate.connection.password"></property>
 		<property name="show_sql">true</property>
@@ -20,10 +20,22 @@
         
 		<!-- Disable the second-level cache  -->
         <property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
+        
+        <property name="hibernate.jdbc.batch_size">20</property>
 		
 		<!-- Drop and re-create the database schema on startup -->
         <property name="hbm2ddl.auto">update</property>
+        
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.jdbc.use_streams_for_binary">true</property>
+        
+        <property name="jadira.usertype.autoRegisterUserTypes">true</property>
+        <property name="jadira.usertype.databaseZone">UTC</property>
+    	<property name="jadira.usertype.javaZone">UTC</property>
+        
 		
-		<mapping class="com.mcnavish.dal.hibernate.db.Docks" />
+		<mapping class="com.mcnavish.topposts.hibernate.db.Posts" />
+		<mapping class="com.mcnavish.topposts.hibernate.db.Feeds" />
+		<mapping class="com.mcnavish.topposts.hibernate.db.FeedTypes" />
 	</session-factory>
 </hibernate-configuration>

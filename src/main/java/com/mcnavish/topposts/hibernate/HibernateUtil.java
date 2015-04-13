@@ -13,6 +13,8 @@ public class HibernateUtil {
 	
 	private static final SessionFactory sessionFactory;
 	
+	private static int BATCH_SIZE = 20;
+	
 	static{
 		Configuration configuration = new Configuration().configure();
 		StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
@@ -38,6 +40,34 @@ public class HibernateUtil {
 		finally{
 			session.close();
 		}
+	}
+	
+	public static int saveList(List<? extends Object> objects){
+		Session session = null;
+		int totalSaved = 0;
+		try{
+			session = HibernateUtil.getSessionFactory().openSession();
+			session.beginTransaction();
+			
+			for(Object obj : objects){
+				session.save(obj);
+				if( totalSaved % BATCH_SIZE == 0 ){
+					session.flush();
+					session.clear();
+				}
+			}
+			
+			session.getTransaction().commit();
+		}
+		catch(Exception ex){
+			System.out.println("Error executing select");
+			throw ex;
+		}
+		finally{
+			session.close();
+		}
+		
+		return totalSaved;
 	}
 	
 	@SuppressWarnings("unchecked")
