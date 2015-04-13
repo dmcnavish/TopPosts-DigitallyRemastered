@@ -55,6 +55,8 @@ public class HibernateUtil {
 					session.flush();
 					session.clear();
 				}
+				
+				totalSaved++;
 			}
 			
 			session.getTransaction().commit();

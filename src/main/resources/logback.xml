@@ -9,6 +9,9 @@
    
   <logger name="com.base22" level="TRACE"/>
    
+  <logger name="org.hibernate" level="ERROR" />
+  <logger name="org.springframework" level="ERROR" />
+  
  
   <root level="debug">
     <appender-ref ref="STDOUT" />

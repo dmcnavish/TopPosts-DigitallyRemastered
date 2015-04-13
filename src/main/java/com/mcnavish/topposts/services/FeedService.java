@@ -7,6 +7,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.mcnavish.topposts.dao.PostDao;
 import com.mcnavish.topposts.domain.DomainObjectConversion;
@@ -15,6 +17,7 @@ import com.mcnavish.topposts.domain.Post;
 import com.mcnavish.topposts.hibernate.db.Posts;
 import com.mcnavish.topposts.scraper.RssScraper;
 
+@ManagedResource
 public class FeedService {
 	
 	@Autowired
@@ -22,6 +25,7 @@ public class FeedService {
 	
 	private static Logger logger = LoggerFactory.getLogger(FeedService.class);
 
+	@ManagedOperation(description="Hook to manually force the processing of feeds.")
 	public void processFeeds(){
 		
 		//TODO:get feeds from db
@@ -45,7 +49,7 @@ public class FeedService {
 			logger.debug("No posts found for day :" + minimumDate);
 			return;
 		}
-		
+		logger.debug("Total posts to save: " + posts.size());
 		List<Posts> allPosts = DomainObjectConversion.toPosts(posts);
 		int totalSaved = postDao.savePosts(allPosts);
 		logger.debug(totalSaved + " Posts saved.");

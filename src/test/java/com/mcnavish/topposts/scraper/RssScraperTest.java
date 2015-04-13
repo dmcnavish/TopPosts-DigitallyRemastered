@@ -1,5 +1,6 @@
 package com.mcnavish.topposts.scraper;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
@@ -174,7 +175,23 @@ public class RssScraperTest {
 		PowerMockito.doReturn( doc ).when(Jsoup.class, "parse", requestUrl, 3000);
 		DateTime minimumDate = DateTime.now().minusDays(1);
 		rssScraper.extractPosts(feed, minimumDate);
+	}
+	
+	@Test(expected=IOException.class)
+	public void getPostsTest_feedBurner_SocketTimeout() throws Exception{
 		
+		String feedUrl = "http://feeds.gawker.com/gizmodo/full";
+		String url = rssScraper.buildYqlUrl(feedUrl);
+		URL requestUrl = new URL(url);
+		
+		Feed feed = new Feed();
+		feed.setUrl(feedUrl);
+		
+		PowerMockito.spy(Jsoup.class);
+		
+		PowerMockito.doThrow(new IOException("Forced IOException!!")).when(Jsoup.class, "parse", requestUrl, 3000);
+		DateTime minimumDate = DateTime.now().minusDays(1);
+		rssScraper.extractPosts(feed, minimumDate);
 	}
 	
 	private boolean verifyDate(String expected, DateTime actual, String dateFormat){
