@@ -8,6 +8,7 @@ import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 import org.springframework.jmx.export.naming.MetadataNamingStrategy;
 
+import com.mcnavish.topposts.dao.FeedDao;
 import com.mcnavish.topposts.dao.PostDao;
 import com.mcnavish.topposts.services.FeedService;
 
@@ -26,6 +27,11 @@ public class ServicesConfig {
 	@Bean
 	public PostDao postDao(){
 		return new PostDao();
+	}
+	
+	@Bean
+	public FeedDao feedDao(){
+		return new FeedDao();
 	}
 	
 	@Bean

@@ -79,7 +79,7 @@ public class HibernateUtil {
 		try{
 			session = HibernateUtil.getSessionFactory().openSession();
 			session.beginTransaction();
-			result = (List<T>)session.createQuery("from Docks").list();
+			result = (List<T>)session.createQuery("from " + cls.getSimpleName()).list();
 			session.getTransaction().commit();
 		}
 		catch(Exception ex){

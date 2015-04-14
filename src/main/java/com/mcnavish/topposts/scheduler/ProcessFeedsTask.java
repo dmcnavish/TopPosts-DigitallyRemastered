@@ -26,7 +26,13 @@ public class ProcessFeedsTask {
 		StopWatch stopWatch = new StopWatch("Process Feeds StopWatch");
 		stopWatch.start("Start processFeeds");
 		
-		feedService.processFeeds();
+		try{
+			feedService.processFeeds();
+		}
+		catch(Exception ex){
+			logger.error("Error processing feeds", ex);
+		}
+		
 		
 		stopWatch.stop();
 		logger.debug("Complete processFeeds \n" + stopWatch.prettyPrint());
@@ -35,5 +41,9 @@ public class ProcessFeedsTask {
 	@ManagedOperation(description="Hook to manually force the processing of feeds.")
 	public void forceProcessFeeds(){
 		processFeeds();
+	}
+
+	public void setFeedService(FeedService feedService) {
+		this.feedService = feedService;
 	}
 }

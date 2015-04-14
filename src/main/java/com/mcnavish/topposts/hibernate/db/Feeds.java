@@ -15,7 +15,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="feeds")
-public class Feeds {
+public class Feeds implements CommonHibernate{
 
 	private long feedsId;
 	private FeedTypes feedTypes;

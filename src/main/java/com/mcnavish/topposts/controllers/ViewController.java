@@ -23,7 +23,7 @@ public class ViewController {
 	}
 	
 	@RequestMapping("/process")
-	public String processFeeds(){
+	public String processFeeds() throws Exception{
 		
 		feedService.processFeeds();
 		

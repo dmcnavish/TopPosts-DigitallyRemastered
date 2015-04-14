@@ -29,11 +29,31 @@ public class DomainObjectConversion {
 		posts.setPublishedDate( post.getPublishedDate());
 		posts.setTitle(post.getTitle());
 		posts.setTwitterTweets( post.getTwitterTweets());
-		posts.setFeeds( toFeeds( post.getFeed() ));
+		posts.setFeeds( toDbFeeds( post.getFeed() ));
 		return posts;
 	}
 	
-	public static Feeds toFeeds(Feed feed){
+	public static List<Feed> toListFeed(List<Feeds> feeds){
+		List<Feed> allFeeds = new ArrayList<Feed>();
+		
+		for(Feeds feed : feeds){
+			allFeeds.add( toFeed(feed));
+		}
+		
+		return allFeeds;
+	}
+	
+	public static Feed toFeed(Feeds feeds){
+		if(feeds == null) return null;
+		
+		Feed feed = new Feed();
+		feed.setFeedId(feeds.getFeedsId());
+		feed.setDateFormat( feeds.getDateformat());
+		feed.setUrl( feeds.getUrl());
+		return feed;
+	}
+	
+	public static Feeds toDbFeeds(Feed feed){
 		if(feed == null) return null;
 		
 		Feeds feeds = new Feeds();
