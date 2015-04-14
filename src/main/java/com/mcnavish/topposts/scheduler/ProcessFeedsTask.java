@@ -3,6 +3,8 @@ package com.mcnavish.topposts.scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
@@ -10,6 +12,7 @@ import org.springframework.util.StopWatch;
 import com.mcnavish.topposts.services.FeedService;
 
 @Component
+@ManagedResource
 public class ProcessFeedsTask {
 	
 	@Autowired
@@ -27,5 +30,10 @@ public class ProcessFeedsTask {
 		
 		stopWatch.stop();
 		logger.debug("Complete processFeeds \n" + stopWatch.prettyPrint());
+	}
+	
+	@ManagedOperation(description="Hook to manually force the processing of feeds.")
+	public void forceProcessFeeds(){
+		processFeeds();
 	}
 }

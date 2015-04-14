@@ -1,7 +1,6 @@
 package com.mcnavish.topposts.scraper;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
