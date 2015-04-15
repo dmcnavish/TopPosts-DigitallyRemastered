@@ -90,6 +90,10 @@ public class RssScraper {
 			logger.error("Error getting posts", ex);
 			throw ex;
 		}
+		catch(Exception ex){
+			logger.error("Unhandled error!", ex);
+			throw ex;
+		}
 		
 		return allPosts;
 	}

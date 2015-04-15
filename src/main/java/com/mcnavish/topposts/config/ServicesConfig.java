@@ -11,6 +11,7 @@ import org.springframework.jmx.export.naming.MetadataNamingStrategy;
 import com.mcnavish.topposts.dao.FeedDao;
 import com.mcnavish.topposts.dao.PostDao;
 import com.mcnavish.topposts.services.FeedService;
+import com.mcnavish.topposts.services.PostService;
 
 @Configuration
 public class ServicesConfig {
@@ -37,6 +38,11 @@ public class ServicesConfig {
 	@Bean
 	public FeedService feedService(){
 		return new FeedService();
+	}
+	
+	@Bean
+	public PostService postService(){
+		return new PostService();
 	}
 	
 	@Bean

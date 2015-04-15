@@ -46,7 +46,7 @@ public class FeedService {
 			return;
 		}
 		logger.debug("Total posts to save: " + posts.size());
-		List<Posts> allPosts = DomainObjectConversion.toPosts(posts);
+		List<Posts> allPosts = DomainObjectConversion.toDbPosts(posts);
 		int totalSaved = postDao.savePosts(allPosts);
 		logger.debug(totalSaved + " Posts saved.");
 	}

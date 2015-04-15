@@ -37,7 +37,7 @@ public class RssScraperTest {
 		String expectedTitle1 = "some title 1";
 		String expectedDescription1 = "&lt;img src=\\\"http://i.kinja-img.com/gawker-media/image/upload/s--M8gRpWei--/c_fit,fl_progressive,q_80,w_636/tneazg5w8rhhuemudekt.jpg\\\" /&gt;";
 		String expectedLink1 = "http://feeds.gawker.com/~r/gizmodo/full/~3/LJEt6SjYyhc/htc-one-m9-teardown-dont-try-this-at-home-1695893624";
-		String expectedPublishedDate1 = "Mon, 06 Apr 2015 04:00:00 GMT";
+		String expectedPublishedDate1 = "Wed, 15 Apr 2015 02:53:13 GMT";
 		
 		String expectedTitle2 = "different title 2";
 		String expectedDescription2 = "&lt;img src=\\\"http://i.kinja-img.com/gawker-media/image/upload/s--M8gRpWei--/c_fit,fl_progressive,q_80,w_636/tneazg5w8rhhuemudekt.jpg\\\" /&gt;";

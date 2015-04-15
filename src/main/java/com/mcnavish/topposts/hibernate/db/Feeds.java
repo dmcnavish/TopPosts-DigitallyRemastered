@@ -18,6 +18,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class Feeds implements CommonHibernate{
 
 	private long feedsId;
+	private String name;
 	private FeedTypes feedTypes;
 	private String url;
 	private String dateformat;
@@ -59,5 +60,11 @@ public class Feeds implements CommonHibernate{
 	}
 	public void setPosts(List<Posts> posts) {
 		this.posts = posts;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 }

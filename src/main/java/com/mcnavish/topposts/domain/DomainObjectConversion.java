@@ -9,17 +9,41 @@ import com.mcnavish.topposts.hibernate.db.Posts;
 
 public class DomainObjectConversion {
 	
-	public static List<Posts> toPosts(List<Post> allPosts){
+	public static List<Post> toPost(List<Posts> posts){
+		List<Post> allPosts = new ArrayList<Post>();
+		
+		for(Posts post : posts){
+			allPosts.add( toPost(post));
+		}
+		
+		return allPosts;
+	}
+	
+	public static Post toPost(Posts posts){
+		Post post = new Post();
+		post.setFaceBookLikes( posts.getFacebookLikes());
+		if(posts.getHtml() != null){
+			post.setHtml( new String(posts.getHtml()) );
+		}
+		post.setUrl( posts.getUrl());
+		post.setPublishedDate( posts.getPublishedDate());
+		post.setTitle(posts.getTitle());
+		post.setTwitterTweets( posts.getTwitterTweets());
+		post.setFeed( toFeed( posts.getFeeds() ));
+		return post;
+	}
+	
+	public static List<Posts> toDbPosts(List<Post> allPosts){
 		List<Posts> posts = new ArrayList<Posts>();
 		
 		for(Post post : allPosts){
-			posts.add( toPosts(post));
+			posts.add( toDbPosts(post));
 		}
 		
 		return posts;
 	}
 
-	public static Posts toPosts(Post post){
+	public static Posts toDbPosts(Post post){
 		Posts posts = new Posts();
 		posts.setFacebookLikes( post.getFaceBookLikes());
 		if(post.getHtml() != null){
@@ -48,6 +72,7 @@ public class DomainObjectConversion {
 		
 		Feed feed = new Feed();
 		feed.setFeedId(feeds.getFeedsId());
+		feed.setName( feeds.getName());
 		feed.setDateFormat( feeds.getDateformat());
 		feed.setUrl( feeds.getUrl());
 		return feed;

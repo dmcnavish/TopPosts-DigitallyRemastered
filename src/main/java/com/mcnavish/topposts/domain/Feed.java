@@ -5,6 +5,7 @@ public class Feed {
 	private long feedId;
 	private String url;
 	private String dateFormat;
+	private String name;
 	
 	public String getUrl() {
 		return url;
@@ -23,6 +24,12 @@ public class Feed {
 	}
 	public void setFeedId(long feedId) {
 		this.feedId = feedId;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	

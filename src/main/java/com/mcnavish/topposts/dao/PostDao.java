@@ -10,4 +10,8 @@ public class PostDao {
 	public int savePosts(List<Posts> posts){
 		return HibernateUtil.saveList(posts);
 	}
+	
+	public List<Posts> listPosts(){
+		return HibernateUtil.list(Posts.class);
+	}
 }

@@ -12,7 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"> 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
-<title>Docked and Loaded</title>
+<title>Top Posts</title>
 
 <base href="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}${req.contextPath}/" />
 <link rel='stylesheet' href='webjars/bootstrap/3.3.4/css/bootstrap.min.css'>
@@ -32,7 +32,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Docked & Loaded</a>
+          <a class="navbar-brand" href="#">Top Posts</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -46,15 +46,19 @@
 
 	<div class='container'>
 		<div class='starter-template'>
-			<h1>Docks</h1>
+			<h4 class='text-left'>Check out the posts for today</h4>
 			<div class='docks-container'>
 				<div class='row'>
-					<c:forEach items="${docks}" var="dock">
-						<div class=' col-xs-6'>
-							<div class='single-dock-container'>
-								<span>Id: ${dock.id}</span>
-								<span>Lane: ${dock.lane}</span>
-								<span>Is Occupied: ${dock.occupied}</span>
+					<c:forEach items="${posts}" var="post">
+						<div class='col-xs-12 single-dock-container'>
+							<div class='col-xs-12'>
+								<h3><a href="${post.url}">${post.title}</a></h3>
+							</div>
+							<div class='col-xs-12'>
+								<span>via <a href="${post.feed.url}">${post.feed.name}</a></span>
+							</div>
+							<div class='col-xs-12'>
+								<div>${post.html}</div>
 							</div>
 						</div>
 					</c:forEach>
