@@ -18,7 +18,7 @@ public class PostService {
 	public List<Post> listTopPosts(){
 		List<Post> allPosts = new ArrayList<Post>();
 		
-		//TODO: filter by date range and group by max count for feed id
+		
 		List<Posts> posts = postDao.listPosts();
 		if(posts == null) return allPosts;
 		

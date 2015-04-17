@@ -1,34 +1,34 @@
-package com.mcnavish.topposts.hibernate;
+package com.mcnavish.topposts.dao;
 
 import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
 
+import com.mcnavish.topposts.hibernate.HibernateUtil;
 import com.mcnavish.topposts.hibernate.db.CommonHibernate;
 
-public class HibernateUtil {
+public class CommonHibernateDao {
+
+	private final SessionFactory sessionFactory;
 	
-	private static final SessionFactory sessionFactory;
+	private int BATCH_SIZE = 20;
 	
-	private static int BATCH_SIZE = 20;
-	
-	static{
-		Configuration configuration = new Configuration().configure();
-		StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
-		sessionFactory = configuration.buildSessionFactory(builder.build());
+	public CommonHibernateDao(){
+//		Configuration configuration = new Configuration().configure();
+//		StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
+//		sessionFactory = configuration.buildSessionFactory(builder.build());
+		sessionFactory = HibernateUtil.getSessionFactory();
 	}
 	
-	public static SessionFactory getSessionFactory(){
+	public SessionFactory getSessionFactory(){
 		return sessionFactory;
 	}
-	
-	public static void save(Object obj){
+
+	public void save(Object obj){
 		Session session = null;
 		try{
-			session = HibernateUtil.getSessionFactory().openSession();
+			session = getSessionFactory().openSession();
 			session.beginTransaction();
 			session.save(obj);
 			session.getTransaction().commit();
@@ -42,11 +42,11 @@ public class HibernateUtil {
 		}
 	}
 	
-	public static int saveList(List<? extends Object> objects){
+	public int saveList(List<? extends Object> objects){
 		Session session = null;
 		int totalSaved = 0;
 		try{
-			session = HibernateUtil.getSessionFactory().openSession();
+			session = getSessionFactory().openSession();
 			session.beginTransaction();
 			
 			for(Object obj : objects){
@@ -73,11 +73,11 @@ public class HibernateUtil {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends CommonHibernate> List<T> list(Class<T> cls){
+	public <T extends CommonHibernate> List<T> list(Class<T> cls){
 		List<T> result = null;
 		Session session = null;
 		try{
-			session = HibernateUtil.getSessionFactory().openSession();
+			session = getSessionFactory().openSession();
 			session.beginTransaction();
 			result = (List<T>)session.createQuery("from " + cls.getSimpleName()).list();
 			session.getTransaction().commit();
@@ -92,5 +92,4 @@ public class HibernateUtil {
 
 		return result;
 	}
-
 }

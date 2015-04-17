@@ -14,6 +14,7 @@ import com.mcnavish.topposts.domain.Feed;
 import com.mcnavish.topposts.domain.Post;
 import com.mcnavish.topposts.hibernate.db.Feeds;
 import com.mcnavish.topposts.hibernate.db.Posts;
+import com.mcnavish.topposts.scraper.FacebookScraper;
 import com.mcnavish.topposts.scraper.RssScraper;
 
 
@@ -45,6 +46,14 @@ public class FeedService {
 			logger.debug("No posts found for day :" + minimumDate);
 			return;
 		}
+		
+		FacebookScraper facebookScraper = new FacebookScraper();
+		facebookScraper.addFacebookLikeCounts(posts);
+		
+		//TODO: get likes and tweets for all posts
+		
+		//TODO: filter out only the top posts for each feed 
+		
 		logger.debug("Total posts to save: " + posts.size());
 		List<Posts> allPosts = DomainObjectConversion.toDbPosts(posts);
 		int totalSaved = postDao.savePosts(allPosts);
