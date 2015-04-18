@@ -80,6 +80,9 @@ public class RssScraper {
 				post.setHtml(item.select("description").text());
 				String pubDate = item.select("pubDate").text();
 				DateTime dt = dateFormatter.parseDateTime(pubDate);
+				
+				if(dt.isBefore(minimumDate)) continue;
+				
 				post.setPublishedDate(dt);
 				post.setFeed(feed);
 				allPosts.add(post);

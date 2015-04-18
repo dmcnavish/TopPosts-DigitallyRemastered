@@ -24,7 +24,11 @@ public class FacebookScraper {
 
 	public void addFacebookLikeCounts(List<Post> posts) throws IOException, IllegalArgumentException{
 		for(int i=0; i< posts.size(); i+=FACEBOOK_URL_SIZE){
-			List<Post> subListPosts = posts.subList(i, i+FACEBOOK_URL_SIZE);
+			int subListSize = i+FACEBOOK_URL_SIZE;
+			if(subListSize > posts.size()){
+				subListSize = posts.size();
+			}
+			List<Post> subListPosts = posts.subList(i, subListSize);
 			String url = buildFacebookLikeUrl(subListPosts);
 			getAndAddCounts(subListPosts, url);
 		}

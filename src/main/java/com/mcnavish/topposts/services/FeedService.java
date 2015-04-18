@@ -42,9 +42,12 @@ public class FeedService {
 		List<Feed> allFeeds = DomainObjectConversion.toListFeed(feeds);
 		
 		DateTime minimumDate = DateTime.now();
-		minimumDate.minusHours( minimumDate.getHourOfDay());
-		minimumDate.minusMinutes( minimumDate.getMinuteOfHour());
+		minimumDate = minimumDate.withHourOfDay(0);
+		minimumDate = minimumDate.withMinuteOfHour(0);
+		minimumDate = minimumDate.withSecondOfMinute(0);
 		
+		logger.debug("Getting posts with minimumDate: " + minimumDate);
+		 
 		RssScraper rssScrapper = new RssScraper();
 		List<Post> posts = rssScrapper.getAllPosts(allFeeds, minimumDate);
 		
