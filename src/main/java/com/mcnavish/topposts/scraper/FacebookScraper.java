@@ -38,7 +38,7 @@ public class FacebookScraper {
 		return url;
 	}
 	
-	protected void getAndAddCounts(List<Post> posts, String url) throws IOException, IllegalArgumentException{	
+	protected void getAndAddCounts(List<Post> posts, String url) throws IOException{	
 		try{
 			URL requestUrl = new URL(url);
 			Document doc = Jsoup.parse(requestUrl, REQUEST_TIMEOUT_MILLIS);
@@ -58,8 +58,8 @@ public class FacebookScraper {
 				}
 			}
 		
-		}catch(IOException | IllegalArgumentException ex){
-			logger.error("Error getting posts", ex);
+		}catch(IOException ex){
+			logger.error("Error getting fb likes for url: " + url, ex);
 			throw ex;
 		}
 		catch(Exception ex){

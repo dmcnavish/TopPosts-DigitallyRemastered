@@ -2,7 +2,7 @@ package com.mcnavish.topposts.domain;
 
 import org.joda.time.DateTime;
 
-public class Post {
+public class Post{
 
 	private String url;
 	private String title;
@@ -11,6 +11,22 @@ public class Post {
 	private int faceBookLikes;
 	private int twitterTweets;
 	private Feed feed;
+
+	
+	public int getPostRating(){
+		return faceBookLikes + twitterTweets;
+	}
+	
+	public long getFeedId(){
+		if(feed != null){
+			return feed.getFeedId();
+		}
+		return -1;
+	}
+	
+	public String toString(){
+		return title;
+	}
 	
 	public String getHtml() {
 		return html;
