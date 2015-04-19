@@ -15,12 +15,7 @@ public class PostDao extends CommonHibernateDao {
 		return saveList(posts);
 	}
 	
-	public List<Posts> listPosts(){
-		
-		//TODO: filter by date range and group by max count for feed id
-		DateTime endDate = DateTime.now(DateTimeZone.UTC);
-		DateTime startDate = endDate.minusDays(1);
-		
+	public List<Posts> listPosts(DateTime startDate, DateTime endDate){
 		Criteria criteria = getSessionFactory().openSession().createCriteria(Posts.class);
 		criteria.add( Restrictions.ge("publishedDate", startDate));
 		criteria.add( Restrictions.le("publishedDate", endDate));

@@ -3,6 +3,7 @@ package com.mcnavish.topposts.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.mcnavish.topposts.dao.PostDao;
@@ -15,14 +16,11 @@ public class PostService {
 	@Autowired
 	private PostDao postDao;
 	
-	public List<Post> listTopPosts(){
+	public List<Post> listTopPosts(DateTime startDate, DateTime endDate){
 		List<Post> allPosts = new ArrayList<Post>();
 		
-		
-		List<Posts> posts = postDao.listPosts();
+		List<Posts> posts = postDao.listPosts(startDate, endDate);
 		if(posts == null) return allPosts;
-		
-		
 		
 		allPosts = DomainObjectConversion.toPost(posts);
 		return allPosts;

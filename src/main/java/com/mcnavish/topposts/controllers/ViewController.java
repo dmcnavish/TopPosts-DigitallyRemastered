@@ -3,6 +3,8 @@ package com.mcnavish.topposts.controllers;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +26,11 @@ public class ViewController {
 	@RequestMapping("/")
 	public String index(Map<String, Object> model) throws Exception{	
 		
-		List<Post> posts = postService.listTopPosts();
+		//TODO: get dates from request
+		DateTime endDate = DateTime.now(DateTimeZone.UTC);
+		DateTime startDate = endDate.minusDays(1);
+		
+		List<Post> posts = postService.listTopPosts(startDate, endDate);
 		
 		model.put("posts", posts);
 		return "index";

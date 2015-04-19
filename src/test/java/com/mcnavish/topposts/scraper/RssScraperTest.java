@@ -1,15 +1,16 @@
 package com.mcnavish.topposts.scraper;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.StringReader;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,12 +18,13 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.xml.sax.InputSource;
 
 import com.mcnavish.topposts.domain.Feed;
 import com.mcnavish.topposts.domain.Post;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Jsoup.class)
+@PrepareForTest({DocumentBuilder.class, DocumentBuilderFactory.class})
 public class RssScraperTest {
 
 	private RssScraper rssScraper;
@@ -54,7 +56,7 @@ public class RssScraperTest {
 				"    <results>\n" + 
 				"        <item>\n" + 
 				"            <title>" + expectedTitle1 + "</title>\n" + 
-				"            <link>http://feeds.gawker.com/~r/gizmodo/full/~3/WfiXN-IY_C4/phase-change-material-chills-milk-without-electricity-1697312107</link>\n" + 
+				"            <link>" + expectedLink1 + "</link>\n" + 
 				"            <description>" + expectedDescription1 + "</description>" +
 				"			 <category domain=\"\">in the making</category>\n" + 
 				"            <category domain=\"\">thermal batteries</category>\n" + 
@@ -62,11 +64,11 @@ public class RssScraperTest {
 				"            <pubDate>" + expectedPublishedDate1 + "</pubDate>\n" + 
 				"            <guid isPermaLink=\"false\">1697312107</guid>\n" + 
 				"            <dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">Maddie Stone</dc:creator>\n" + 
-				"            <feedburner:origLink xmlns:feedburner=\"http://rssnamespace.org/feedburner/ext/1.0\">" + expectedLink1 + "</feedburner:origLink>\n" + 
+				"            <feedburner:origLink xmlns:feedburner=\"http://rssnamespace.org/feedburner/ext/1.0\">http://someotherurl</feedburner:origLink>\n" + 
 				"        </item>\n" + 
 				"        <item>\n" + 
 				"            <title>" + expectedTitle2 + "</title>\n" + 
-				"            <link>http://feeds.gawker.com/~r/gizmodo/full/~3/BT-2H8QOBy4/nasa-gears-up-for-hubbles-25th-anniversary-1697233864</link>\n" + 
+				"            <link>" + expectedLink2 + "</link>\n" + 
 				"            <description>" + expectedDescription2 + "</description>" +
 				"			 <category domain=\"\">nasa</category>\n" + 
 				"            <category domain=\"\">astronomy</category>\n" + 
@@ -76,7 +78,7 @@ public class RssScraperTest {
 				"            <pubDate>" + expectedPublishedDate2 + "</pubDate>\n" + 
 				"            <guid isPermaLink=\"false\">1697233864</guid>\n" + 
 				"            <dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">Maddie Stone</dc:creator>\n" + 
-				"            <feedburner:origLink xmlns:feedburner=\"http://rssnamespace.org/feedburner/ext/1.0\">" + expectedLink2 + "</feedburner:origLink>\n" + 
+				"            <feedburner:origLink xmlns:feedburner=\"http://rssnamespace.org/feedburner/ext/1.0\">https://wrongurl</feedburner:origLink>\n" + 
 				"        </item>" +
 				"	</results>" +
 				"</query>";
@@ -85,20 +87,17 @@ public class RssScraperTest {
 		
 		String feedUrl = "http://feeds.gawker.com/gizmodo/full";
 		String url = rssScraper.buildYqlUrl(feedUrl);
-		URL requestUrl = new URL(url);
-		Document doc = Jsoup.parseBodyFragment(responseWithItems);
+		
+		mockXpath(responseWithItems, url);
 		
 		Feed feed = new Feed();
 		feed.setUrl(feedUrl);
 		feed.setDateFormat(dateFormat);
 		feed.setHtmlFieldName("description");
-		feed.setLinkFieldName("feedburner|origLink");
+		feed.setLinkFieldName("link");
 		feed.setPublishedDateFieldName("pubDate");
 		feed.setTimezone("UTC");
-		
-		PowerMockito.spy(Jsoup.class);
-		
-		PowerMockito.doReturn( doc ).when(Jsoup.class, "parse", requestUrl, 3000);
+
 		List<Post> result =  rssScraper.extractPosts(feed, minimumDate);
 		
 		Assert.assertEquals(2, result.size());
@@ -117,23 +116,73 @@ public class RssScraperTest {
 	}
 	
 	@Test
-	public void getPostsTest_feedBurner_noResults() throws Exception{
-		String responseWithItems = 
+	public void getPostsTest_feedBurner_nodeWithColon() throws Exception{
+		String dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz";
+		DateTimeFormatter dateFormatter = DateTimeFormat.forPattern(dateFormat);
+		DateTime minimumDate = DateTime.now().minusDays(1);
+		minimumDate.toString(dateFormatter);
+		
+		String expectedTitle1 = "some title 1";
+		String expectedDescription1 = "&lt;img src=\\\"http://i.kinja-img.com/gawker-media/image/upload/s--M8gRpWei--/c_fit,fl_progressive,q_80,w_636/tneazg5w8rhhuemudekt.jpg\\\" /&gt;";
+		String expectedLink1 = "http://feeds.gawker.com/~r/gizmodo/full/~3/LJEt6SjYyhc/htc-one-m9-teardown-dont-try-this-at-home-1695893624";
+		String expectedPublishedDate1 = minimumDate.plusHours(1).toString(dateFormatter);
+		
+		String responseWithItems = 				
 				"<query yahoo:count=\"20\" yahoo:created=\"2015-04-12T16:07:03Z\" yahoo:lang=\"en-us\" xmlns:yahoo=\"http://www.yahooapis.com/v1/base.rng\">\n" + 
 				"    <results>\n" + 
+				"        <item>\n" + 
+				"            <title>" + expectedTitle1 + "</title>\n" + 
+				"            <link>" + expectedLink1 + "</link>\n" + 
+				"            <content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\">" + expectedDescription1 + "</content:encoded>" +
+				"			 <category domain=\"\">in the making</category>\n" + 
+				"            <category domain=\"\">thermal batteries</category>\n" + 
+				"            <category domain=\"\">useful science</category>\n" + 
+				"            <pubDate>" + expectedPublishedDate1 + "</pubDate>\n" + 
+				"            <guid isPermaLink=\"false\">1697312107</guid>\n" + 
+				"            <dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">Maddie Stone</dc:creator>\n" + 
+				"            <feedburner:origLink xmlns:feedburner=\"http://rssnamespace.org/feedburner/ext/1.0\">http://someotherurl</feedburner:origLink>\n" + 
+				"        </item>\n" + 
+				"	</results>" +
+				"</query>";
+		
+		String feedUrl = "http://feeds.gawker.com/gizmodo/full";
+		String url = rssScraper.buildYqlUrl(feedUrl);
+		
+		mockXpath(responseWithItems, url);
+		
+		Feed feed = new Feed();
+		feed.setUrl(feedUrl);
+		feed.setDateFormat(dateFormat);
+		feed.setHtmlFieldName("//*[name()='content:encoded']");
+		feed.setLinkFieldName("link");
+		feed.setPublishedDateFieldName("pubDate");
+		feed.setTimezone("UTC");
+
+		List<Post> result =  rssScraper.extractPosts(feed, minimumDate);
+		
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(expectedTitle1, result.get(0).getTitle());
+		String unescapedHtml1 = StringEscapeUtils.unescapeHtml(expectedDescription1);
+		Assert.assertEquals( unescapedHtml1, result.get(0).getHtml());
+		Assert.assertEquals(expectedLink1, result.get(0).getUrl());
+		Assert.assertEquals(verifyDate(expectedPublishedDate1, result.get(0).getPublishedDate(), dateFormat), true);
+	}
+	
+	@Test
+	public void getPostsTest_feedBurner_noResults() throws Exception{
+		String responseWithoutItems = 
+				"<query yahoo:count=\"20\" yahoo:created=\"2015-04-12T16:07:03Z\" yahoo:lang=\"en-us\" xmlns:yahoo=\"http://www.yahooapis.com/v1/base.rng\">" + 
+				"    <results>" + 
 				"	 </results>" +
 				"</query>";
 		
 		String feedUrl = "http://feeds.gawker.com/gizmodo/full";
 		String url = rssScraper.buildYqlUrl(feedUrl);
-		URL requestUrl = new URL(url);
-		Document doc = Jsoup.parseBodyFragment(responseWithItems);
-		
 		Feed feed = new Feed();
 		feed.setUrl(feedUrl);
 		
-		PowerMockito.spy(Jsoup.class);
-		PowerMockito.doReturn( doc ).when(Jsoup.class, "parse", requestUrl, 3000);
+		mockXpath(responseWithoutItems, url);
+		
 		DateTime minimumDate = DateTime.now().minusDays(1);
 		List<Post> result =  rssScraper.extractPosts(feed, minimumDate);
 		
@@ -152,7 +201,7 @@ public class RssScraperTest {
 				"    <results>\n" + 
 				"        <item>\n" + 
 				"            <title>" + expectedTitle1 + "</title>\n" + 
-				"            <link>http://feeds.gawker.com/~r/gizmodo/full/~3/WfiXN-IY_C4/phase-change-material-chills-milk-without-electricity-1697312107</link>\n" + 
+				"            <link>" + expectedLink1 + "</link>\n" + 
 				"            <description>" + expectedDescription1 + "</description>" +
 				"			 <category domain=\"\">in the making</category>\n" + 
 				"            <category domain=\"\">thermal batteries</category>\n" + 
@@ -160,30 +209,25 @@ public class RssScraperTest {
 				"            <pubDate>" + expectedPublishedDate1 + "</pubDate>\n" + 
 				"            <guid isPermaLink=\"false\">1697312107</guid>\n" + 
 				"            <dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">Maddie Stone</dc:creator>\n" + 
-				"            <feedburner:origLink xmlns:feedburner=\"http://rssnamespace.org/feedburner/ext/1.0\">" + expectedLink1 + "</feedburner:origLink>\n" + 
+				"            <feedburner:origLink xmlns:feedburner=\"http://rssnamespace.org/feedburner/ext/1.0\">wronglink</feedburner:origLink>\n" + 
 				"        </item>\n" + 
 				"	</results>" +
 				"</query>";
-		
-		
-		
+	
 		String feedUrl = "http://feeds.gawker.com/gizmodo/full";
 		String url = rssScraper.buildYqlUrl(feedUrl);
-		URL requestUrl = new URL(url);
-		Document doc = Jsoup.parseBodyFragment(responseWithItems);
 		String incorrectDateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz";
 		
 		Feed feed = new Feed();
 		feed.setUrl(feedUrl);
 		feed.setDateFormat(incorrectDateFormat);
 		feed.setHtmlFieldName("description");
-		feed.setLinkFieldName("feedburner|origLink");
+		feed.setLinkFieldName("link");
 		feed.setPublishedDateFieldName("pubDate");
 		feed.setTimezone("UTC");
 		
-		PowerMockito.spy(Jsoup.class);
+		mockXpath(responseWithItems, url);
 		
-		PowerMockito.doReturn( doc ).when(Jsoup.class, "parse", requestUrl, 3000);
 		DateTime minimumDate = DateTime.now().minusDays(1);
 		rssScraper.extractPosts(feed, minimumDate);
 	}
@@ -210,7 +254,7 @@ public class RssScraperTest {
 				"    <results>\n" + 
 				"        <item>\n" + 
 				"            <title>" + expectedTitle1 + "</title>\n" + 
-				"            <link>http://feeds.gawker.com/~r/gizmodo/full/~3/WfiXN-IY_C4/phase-change-material-chills-milk-without-electricity-1697312107</link>\n" + 
+				"            <link>" + expectedLink1 + "</link>\n" + 
 				"            <description>" + expectedDescription1 + "</description>" +
 				"			 <category domain=\"\">in the making</category>\n" + 
 				"            <category domain=\"\">thermal batteries</category>\n" + 
@@ -218,11 +262,11 @@ public class RssScraperTest {
 				"            <pubDate>" + expectedPublishedDate1 + "</pubDate>\n" + 
 				"            <guid isPermaLink=\"false\">1697312107</guid>\n" + 
 				"            <dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">Maddie Stone</dc:creator>\n" + 
-				"            <feedburner:origLink xmlns:feedburner=\"http://rssnamespace.org/feedburner/ext/1.0\">" + expectedLink1 + "</feedburner:origLink>\n" + 
+				"            <feedburner:origLink xmlns:feedburner=\"http://rssnamespace.org/feedburner/ext/1.0\">wrong link</feedburner:origLink>\n" + 
 				"        </item>\n" + 
 				"        <item>\n" + 
 				"            <title>" + expectedTitle2 + "</title>\n" + 
-				"            <link>http://feeds.gawker.com/~r/gizmodo/full/~3/BT-2H8QOBy4/nasa-gears-up-for-hubbles-25th-anniversary-1697233864</link>\n" + 
+				"            <link>" + expectedLink2 + "</link>\n" + 
 				"            <description>" + expectedDescription2 + "</description>" +
 				"			 <category domain=\"\">nasa</category>\n" + 
 				"            <category domain=\"\">astronomy</category>\n" + 
@@ -232,7 +276,7 @@ public class RssScraperTest {
 				"            <pubDate>" + expectedPublishedDate2 + "</pubDate>\n" + 
 				"            <guid isPermaLink=\"false\">1697233864</guid>\n" + 
 				"            <dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">Maddie Stone</dc:creator>\n" + 
-				"            <feedburner:origLink xmlns:feedburner=\"http://rssnamespace.org/feedburner/ext/1.0\">" + expectedLink2 + "</feedburner:origLink>\n" + 
+				"            <feedburner:origLink xmlns:feedburner=\"http://rssnamespace.org/feedburner/ext/1.0\">wronglink</feedburner:origLink>\n" + 
 				"        </item>" +
 				"	</results>" +
 				"</query>";
@@ -241,20 +285,17 @@ public class RssScraperTest {
 		
 		String feedUrl = "http://feeds.gawker.com/gizmodo/full";
 		String url = rssScraper.buildYqlUrl(feedUrl);
-		URL requestUrl = new URL(url);
-		Document doc = Jsoup.parseBodyFragment(responseWithItems);
 		
 		Feed feed = new Feed();
 		feed.setUrl(feedUrl);
 		feed.setDateFormat(dateFormat);
 		feed.setHtmlFieldName("description");
-		feed.setLinkFieldName("feedburner|origLink");
+		feed.setLinkFieldName("link");
 		feed.setPublishedDateFieldName("pubDate");
 		feed.setTimezone("UTC");
+
+		mockXpath(responseWithItems, url);
 		
-		PowerMockito.spy(Jsoup.class);
-		
-		PowerMockito.doReturn( doc ).when(Jsoup.class, "parse", requestUrl, 3000);
 		List<Post> result =  rssScraper.extractPosts(feed, minimumDate);
 		
 		Assert.assertEquals(1, result.size());		
@@ -267,20 +308,41 @@ public class RssScraperTest {
 	
 	@Test(expected=IOException.class)
 	public void getPostsTest_feedBurner_SocketTimeout() throws Exception{
-		
 		String feedUrl = "http://feeds.gawker.com/gizmodo/full";
 		String url = rssScraper.buildYqlUrl(feedUrl);
-		URL requestUrl = new URL(url);
 		
 		Feed feed = new Feed();
 		feed.setUrl(feedUrl);
 		
-		PowerMockito.spy(Jsoup.class);
+		//mocks
+		DocumentBuilderFactory builderFactory = PowerMockito.mock(DocumentBuilderFactory.class);
+		DocumentBuilder builder = PowerMockito.mock(DocumentBuilder.class);
 		
-		PowerMockito.doThrow(new IOException("Forced IOException!!")).when(Jsoup.class, "parse", requestUrl, 3000);
+		PowerMockito.spy(DocumentBuilderFactory.class);
+		PowerMockito.doReturn(builderFactory).when(DocumentBuilderFactory.class, "newInstance");
+		PowerMockito.when(builderFactory.newDocumentBuilder()).thenReturn(builder);
+		PowerMockito.when(builder.parse(url)).thenThrow( new IOException("Forced IOException!!") );
+		
 		DateTime minimumDate = DateTime.now().minusDays(1);
 		rssScraper.extractPosts(feed, minimumDate);
 	}
+	
+	private void mockXpath(String source, String url) throws Exception{
+		DocumentBuilderFactory testBuilderfactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder testBuilder = testBuilderfactory.newDocumentBuilder();
+		InputSource inputSource = new InputSource(new StringReader(source));
+		org.w3c.dom.Document doc =  testBuilder.parse(inputSource);
+		
+		//mocks
+		DocumentBuilderFactory builderFactory = PowerMockito.mock(DocumentBuilderFactory.class);
+		DocumentBuilder builder = PowerMockito.mock(DocumentBuilder.class);
+		
+		PowerMockito.spy(DocumentBuilderFactory.class);
+		PowerMockito.doReturn(builderFactory).when(DocumentBuilderFactory.class, "newInstance");
+		PowerMockito.when(builderFactory.newDocumentBuilder()).thenReturn(builder);
+		PowerMockito.when(builder.parse(url)).thenReturn(doc);
+	}
+	
 	
 	private boolean verifyDate(String expected, DateTime actual, String dateFormat){
 		String expectedUtc = expected.replace("GMT", "UTC");

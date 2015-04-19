@@ -41,7 +41,7 @@ public class FeedService {
 		}
 		List<Feed> allFeeds = DomainObjectConversion.toListFeed(feeds);
 		
-		DateTime minimumDate = DateTime.now();
+		DateTime minimumDate = DateTime.now().minusDays(1);
 		minimumDate = minimumDate.withHourOfDay(0);
 		minimumDate = minimumDate.withMinuteOfHour(0);
 		minimumDate = minimumDate.withSecondOfMinute(0);
