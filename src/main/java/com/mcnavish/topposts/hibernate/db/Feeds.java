@@ -22,6 +22,10 @@ public class Feeds implements CommonHibernate{
 	private FeedTypes feedTypes;
 	private String url;
 	private String dateformat;
+	private String timezone;
+	private String htmlFieldName;
+	private String publishedDateFieldName;
+	private String linkFieldName;
 	private List<Posts> posts;
 	
 	@Id
@@ -66,5 +70,29 @@ public class Feeds implements CommonHibernate{
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getTimezone() {
+		return timezone;
+	}
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
+	}
+	public String getHtmlFieldName() {
+		return htmlFieldName;
+	}
+	public void setHtmlFieldName(String htmlFieldName) {
+		this.htmlFieldName = htmlFieldName;
+	}
+	public String getPublishedDateFieldName() {
+		return publishedDateFieldName;
+	}
+	public void setPublishedDateFieldName(String publishedDateFieldName) {
+		this.publishedDateFieldName = publishedDateFieldName;
+	}
+	public String getLinkFieldName() {
+		return linkFieldName;
+	}
+	public void setLinkFieldName(String linkFieldName) {
+		this.linkFieldName = linkFieldName;
 	}
 }

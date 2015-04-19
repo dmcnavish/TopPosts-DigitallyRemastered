@@ -75,6 +75,10 @@ public class DomainObjectConversion {
 		feed.setName( feeds.getName());
 		feed.setDateFormat( feeds.getDateformat());
 		feed.setUrl( feeds.getUrl());
+		feed.setTimezone( feeds.getTimezone());
+		feed.setHtmlFieldName( feeds.getHtmlFieldName());
+		feed.setPublishedDateFieldName( feeds.getPublishedDateFieldName());
+		feed.setLinkFieldName( feeds.getLinkFieldName());
 		return feed;
 	}
 	

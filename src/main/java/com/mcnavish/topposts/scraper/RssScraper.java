@@ -73,12 +73,12 @@ public class RssScraper {
 			DateTimeFormatter dateFormatter = DateTimeFormat.forPattern(feed.getDateFormat());
 			
 			for(Element item : items){
-				logger.debug(item.select("title").text() + " pubDate: " + item.select("pubDate").text());				
+				logger.debug(item.select("title").text() + " published Date: " + item.select( feed.getPublishedDateFieldName() ).text());				
 				Post post = new Post();
 				post.setTitle(item.select("title").text());
-				post.setUrl(item.select("feedburner|origLink").text());
-				post.setHtml(item.select("description").text());
-				String pubDate = item.select("pubDate").text();
+				post.setUrl(item.select( feed.getLinkFieldName() ).text());
+				post.setHtml(item.select( feed.getHtmlFieldName() ).text());
+				String pubDate = item.select( feed.getPublishedDateFieldName() ).text();
 				DateTime dt = dateFormatter.parseDateTime(pubDate);
 				
 				if(dt.isBefore(minimumDate)) continue;
