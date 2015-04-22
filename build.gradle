@@ -18,13 +18,13 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 jar {
-    baseName = 'dockedandloaded'
+    baseName = 'topposts'
     version =  '0.1.0'
 }
 
 war {
-	baseName= 'dockedandloaded'
-	version = '0.1'
+	archiveName = 'ROOT.war'  //naming ROOT so that it works with OpenShift
+	destinationDir = file('webapps')
 }
 
 

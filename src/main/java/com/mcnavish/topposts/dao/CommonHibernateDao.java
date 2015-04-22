@@ -15,9 +15,6 @@ public class CommonHibernateDao {
 	private int BATCH_SIZE = 20;
 	
 	public CommonHibernateDao(){
-//		Configuration configuration = new Configuration().configure();
-//		StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
-//		sessionFactory = configuration.buildSessionFactory(builder.build());
 		sessionFactory = HibernateUtil.getSessionFactory();
 	}
 	

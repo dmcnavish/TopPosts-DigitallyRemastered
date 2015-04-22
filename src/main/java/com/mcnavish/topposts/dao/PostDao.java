@@ -5,7 +5,6 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 import com.mcnavish.topposts.hibernate.db.Posts;
 
