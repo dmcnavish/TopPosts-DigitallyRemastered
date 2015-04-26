@@ -3,9 +3,12 @@ package com.mcnavish.topposts.hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HibernateUtil {
 	
+	private static Logger logger = LoggerFactory.getLogger(HibernateUtil.class);
 	private static final SessionFactory sessionFactory;
 	
 	static{
@@ -21,6 +24,7 @@ public class HibernateUtil {
 		}
 
 		String connectionUrl = "jdbc:postgresql://" + connectionHost + ":" + connectionPort + databaseName;
+		
 		String connectionUserName = System.getenv("OPENSHIFT_POSTGRESQL_DB_USERNAME");
 		String connectionPassword  = System.getenv("OPENSHIFT_POSTGRESQL_DB_PASSWORD");
 		
@@ -28,6 +32,10 @@ public class HibernateUtil {
 			connectionUserName = "davidmcnavish";
 			connectionPassword = "";
 		}
+		
+		logger.debug("connectionUrl: " + connectionUrl);
+		logger.debug("connectionUserName: " + connectionUserName);
+		logger.debug("connectionPassword: " + connectionPassword);
 		
 		configuration.setProperty("hibernate.connection.url", connectionUrl);
 		configuration.setProperty("hibernate.connection.username", connectionUserName);
