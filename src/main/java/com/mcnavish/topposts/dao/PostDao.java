@@ -14,6 +14,7 @@ public class PostDao extends CommonHibernateDao {
 		return saveList(posts);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Posts> listPosts(DateTime startDate, DateTime endDate){
 		Criteria criteria = getSessionFactory().openSession().createCriteria(Posts.class);
 		criteria.add( Restrictions.ge("publishedDate", startDate));
