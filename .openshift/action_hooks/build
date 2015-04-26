@@ -7,4 +7,5 @@ export PATH=$GRADLE_HOME/bin:$PATH
 export PATH=$OPENSHIFT_DATA_DIR/jdk1.8.0_05/bin:$PATH
 export JAVA_HOME=$OPENSHIFT_DATA_DIR/jdk1.8.0_05/
 java -version
-gradle war
+gradle build
+gradle bootRun
