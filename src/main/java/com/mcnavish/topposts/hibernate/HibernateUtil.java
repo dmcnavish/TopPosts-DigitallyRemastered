@@ -46,20 +46,27 @@ public class HibernateUtil {
 		logger.debug("connectionUserName: " + connectionUserName);
 		logger.debug("connectionPassword: " + connectionPassword);
 		
-		configuration.setProperty("hibernate.connection.url", connectionUrl);
-		configuration.setProperty("hibernate.connection.username", connectionUserName);
-		configuration.setProperty("hibernate.connection.password", connectionPassword);
+		if(isOpenShift){
+//			configuration.setProperty("hibernate.connection.url", "");
+			configuration.setProperty("hibernate.connection.datasource","java:comp/env/jdbc/PostgreSQLDS");
+		}
+		else{
+			configuration.setProperty("hibernate.connection.url", connectionUrl);
+			configuration.setProperty("hibernate.connection.username", connectionUserName);
+			configuration.setProperty("hibernate.connection.password", connectionPassword);
+		}
+
 		
 		StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
-		
-		if(isOpenShift){
-			try{
-				DataSource dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/PostgreSQLDS");
-				builder.applySetting(Environment.DATASOURCE, dataSource);
-			}catch(Exception ex){
-				logger.error("Error setting datasource", ex);
-			}
-		}
+//		
+//		if(isOpenShift){
+//			try{
+//				DataSource dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/PostgreSQLDS");
+//				builder.applySetting(Environment.DATASOURCE, dataSource);
+//			}catch(Exception ex){
+//				logger.error("Error setting datasource", ex);
+//			}
+//		}
 		
 		
 		sessionFactory = configuration.buildSessionFactory(builder.build());
