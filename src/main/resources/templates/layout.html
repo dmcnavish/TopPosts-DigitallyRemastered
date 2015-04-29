@@ -43,10 +43,10 @@
 				<div class='row' th:each="post : ${posts}">
 						<div class='col-xs-12 single-dock-container'>
 							<div class='col-xs-12'>
-								<h3><a href="${post.url}" th:text="${post.title}"></a></h3>
+								<h3><a th:href="${post.url}" th:text="${post.title}"></a></h3>
 							</div>
 							<div class='col-xs-12'>
-								<span>via <a href="${post.feed.url}" th:text="${post.feed.name}"></a></span>
+								<span>via <span th:text="${post.feed.name}"></span></span>
 							</div>
 							<div class='col-xs-12'>
 								<div th:utext="${post.html}"></div>
