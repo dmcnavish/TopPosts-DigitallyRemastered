@@ -20,7 +20,7 @@ public class ProcessFeedsTask {
 
 	private static Logger logger = LoggerFactory.getLogger(ProcessFeedsTask.class);
 	
-	@Scheduled(cron="0 0 23 * * *")
+	@Scheduled(cron="0 0 3 * * *")
 	public void processFeeds(){
 		logger.debug("Start processFeeds");
 		StopWatch stopWatch = new StopWatch("Process Feeds StopWatch");

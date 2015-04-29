@@ -12,3 +12,20 @@ body {
   border: 1px solid #eae3e3;
   padding-bottom: 20px;
 }
+
+.post-content{
+	min-height:200px;
+}
+
+.minimized-content{
+	height:200px;
+	overflow:hidden;
+}
+
+.show-less-content{
+	display:none;
+}
+
+.content-toggle{
+	cursor: pointer;
+}

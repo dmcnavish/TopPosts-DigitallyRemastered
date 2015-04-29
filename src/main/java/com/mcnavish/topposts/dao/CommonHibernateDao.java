@@ -44,6 +44,23 @@ public class CommonHibernateDao {
 	}
 	
 	public int saveList(List<? extends Object> objects){
+		int totalSaved = 0;
+		
+		for(Object obj : objects){
+			
+			try{
+				save(obj);
+				totalSaved++;
+			}
+			catch(HibernateException ex){
+				logger.error("error inserting record. Continuing");
+			}
+		}
+		
+		return totalSaved;
+	}
+	
+	public int batchSaveList(List<? extends Object> objects){
 		Session session = null;
 		int totalSaved = 0;
 		try{
@@ -57,7 +74,7 @@ public class CommonHibernateDao {
 					transaction.commit();
 				}
 				catch(HibernateException ex){
-					logger.error("error inserting record. Continuing");
+					logger.error("error inserting record. Continuing", ex);
 					transaction.rollback();
 				}
 				if( totalSaved % BATCH_SIZE == 0 ){

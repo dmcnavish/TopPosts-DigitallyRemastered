@@ -11,7 +11,11 @@
 	<link rel="stylesheet"
     	th:href="@{/css/main.css}"
       	href="../../css/main.css"/>
-    
+      	
+    <script src="webjars/jquery/2.1.3/jquery.min.js"></script>
+	<script src="webjars/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<script src="../../js/main.js"></script>
+	
 </head>
 <body>
 
@@ -48,8 +52,12 @@
 							<div class='col-xs-12'>
 								<span>via <span th:text="${post.feed.name}"></span></span>
 							</div>
-							<div class='col-xs-12'>
+							<div class='col-xs-12 minimized-content post-content'>
 								<div th:utext="${post.html}"></div>
+							</div>
+							<div class='col-xs-12 text-right'>
+								<a class='content-toggle show-more-content'>Show More <span class='glyphicon glyphicon-triangle-bottom'></span></a>
+								<a class='content-toggle show-less-content'>Show Less <span class='glyphicon glyphicon-triangle-top'></span></a>
 							</div>
 						</div>
 				</div>
