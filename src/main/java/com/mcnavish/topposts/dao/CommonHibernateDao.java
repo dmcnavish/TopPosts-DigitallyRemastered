@@ -2,16 +2,20 @@ package com.mcnavish.topposts.dao;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mcnavish.topposts.hibernate.HibernateUtil;
 import com.mcnavish.topposts.hibernate.db.CommonHibernate;
 
 public class CommonHibernateDao {
 
+	private static Logger logger = LoggerFactory.getLogger(CommonHibernateDao.class);
 	private final SessionFactory sessionFactory;
-	
 	private int BATCH_SIZE = 20;
 	
 	public CommonHibernateDao(){
@@ -31,7 +35,7 @@ public class CommonHibernateDao {
 			session.getTransaction().commit();
 		}
 		catch(Exception ex){
-			System.out.println("Error executing select");
+			logger.error("Error executing save", ex);
 			throw ex;
 		}
 		finally{
@@ -44,10 +48,18 @@ public class CommonHibernateDao {
 		int totalSaved = 0;
 		try{
 			session = getSessionFactory().openSession();
-			session.beginTransaction();
+			Transaction transaction = session.beginTransaction();
 			
 			for(Object obj : objects){
-				session.save(obj);
+				
+				try{
+					session.save(obj);
+					transaction.commit();
+				}
+				catch(HibernateException ex){
+					logger.error("error inserting record. Continuing");
+					transaction.rollback();
+				}
 				if( totalSaved % BATCH_SIZE == 0 ){
 					session.flush();
 					session.clear();
@@ -55,11 +67,9 @@ public class CommonHibernateDao {
 				
 				totalSaved++;
 			}
-			
-			session.getTransaction().commit();
 		}
 		catch(Exception ex){
-			System.out.println("Error executing select");
+			logger.error("Error executing saveList", ex);
 			throw ex;
 		}
 		finally{
@@ -75,12 +85,12 @@ public class CommonHibernateDao {
 		Session session = null;
 		try{
 			session = getSessionFactory().openSession();
-			session.beginTransaction();
+			Transaction transaction = session.beginTransaction();
 			result = (List<T>)session.createQuery("from " + cls.getSimpleName()).list();
-			session.getTransaction().commit();
+			transaction.commit();
 		}
 		catch(Exception ex){
-			System.out.println("Error executing select");
+			logger.error("Error executing list", ex);
 			throw ex;
 		}
 		finally{
