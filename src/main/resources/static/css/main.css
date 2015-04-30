@@ -29,3 +29,13 @@ body {
 .content-toggle{
 	cursor: pointer;
 }
+
+.feed-name{
+	background-color: black;
+	color:#9d9d9d;
+  	padding-top: 22px;
+  	padding-left: 10px;
+  	padding-right: 10px;
+  	padding-bottom: 10px;
+	font-weight:bold;
+}

@@ -44,22 +44,22 @@
 		<div class='starter-template'>
 			<h4 class='text-left'>Check out the posts for today</h4>
 			<div class='docks-container'>
-				<div class='row' th:each="post : ${posts}">
-						<div class='col-xs-12 single-dock-container'>
-							<div class='col-xs-12'>
-								<h3><a th:href="${post.url}" th:text="${post.title}"></a></h3>
-							</div>
-							<div class='col-xs-12'>
-								<span>via <span th:text="${post.feed.name}"></span></span>
-							</div>
-							<div class='col-xs-12 minimized-content post-content'>
-								<div th:utext="${post.html}"></div>
-							</div>
-							<div class='col-xs-12 text-right'>
-								<a class='content-toggle show-more-content'>Show More <span class='glyphicon glyphicon-triangle-bottom'></span></a>
-								<a class='content-toggle show-less-content'>Show Less <span class='glyphicon glyphicon-triangle-top'></span></a>
-							</div>
+				<div class='row'>
+					<div th:each="post : ${posts}" class='col-xs-12 single-dock-container text-left'>
+						<div class='col-xs-12 text-right'>
+							<span class='feed-name' th:text="${post.feed.name}"></span>
 						</div>
+						<div class='col-xs-12'>
+							<h3><a th:href="${post.url}" th:text="${post.title}"></a></h3>
+						</div>
+						<div class='col-xs-12 minimized-content post-content'>
+							<div th:utext="${post.html}"></div>
+						</div>
+						<div class='col-xs-12 text-right'>
+							<a class='content-toggle show-more-content'>Show More <span class='glyphicon glyphicon-triangle-bottom'></span></a>
+							<a class='content-toggle show-less-content'>Show Less <span class='glyphicon glyphicon-triangle-top'></span></a>
+						</div>
+					</div>
 				</div>
 			</div>
 		

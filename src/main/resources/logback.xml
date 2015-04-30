@@ -11,6 +11,7 @@
    
   <logger name="org.hibernate" level="ERROR" />
   <logger name="org.springframework" level="ERROR" />
+  <logger name="org.thymeleaf" level="ERROR" />
   
  
   <root level="debug">

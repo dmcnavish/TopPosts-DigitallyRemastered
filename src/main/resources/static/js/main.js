@@ -16,5 +16,9 @@ $(document).ready(function(){
 		$(elm).hide();
 	});
 	
+	function init(){
+		$('img').addClass('img-responsive');
+	}
 	
+	init();
 });
