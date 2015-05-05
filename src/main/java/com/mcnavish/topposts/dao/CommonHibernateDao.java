@@ -28,14 +28,18 @@ public class CommonHibernateDao {
 
 	public void save(Object obj){
 		Session session = null;
+		Transaction transaction = null;
 		try{
 			session = getSessionFactory().openSession();
-			session.beginTransaction();
+			transaction = session.beginTransaction();
 			session.save(obj);
-			session.getTransaction().commit();
+			transaction.commit();
 		}
 		catch(Exception ex){
 			logger.error("Error executing save", ex);
+			if(transaction != null){
+				transaction.rollback();
+			}
 			throw ex;
 		}
 		finally{

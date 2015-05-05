@@ -5,11 +5,14 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.mcnavish.topposts.domain.Post;
@@ -27,11 +30,18 @@ public class ViewController {
 	@Autowired
 	private PostService postService;
 	
+	private DateTimeFormatter requestDateFormatter = DateTimeFormat.forPattern("MMddyyyy");
+	
 	@RequestMapping("/")
-	public ModelAndView index(Map<String, Object> model) throws Exception{	
-		//TODO: get dates from request
+	public ModelAndView index(@RequestParam(value="date", required=false) String date, Map<String, Object> model) throws Exception{	
 		DateTime endDate = DateTime.now(DateTimeZone.UTC);
-		DateTime startDate = endDate.minusDays(1);
+		if(date != null){
+			endDate = requestDateFormatter.withZoneUTC().parseDateTime(date);
+			if(endDate.dayOfYear() == DateTime.now().dayOfYear()){
+				endDate = DateTime.now(DateTimeZone.UTC);
+			}
+		}
+		DateTime startDate = endDate.minusDays(1).withTimeAtStartOfDay();
 		
 		List<Post> posts = postService.listTopPosts(startDate, endDate);
 
