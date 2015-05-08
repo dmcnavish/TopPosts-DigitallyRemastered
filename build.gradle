@@ -65,6 +65,9 @@ dependencies {
 	
 	
 	compile group: 'org.postgresql', name: 'postgresql', version: '9.4-1201-jdbc4'
+	
+	compile group: 'com.h2database', name:'h2', version:'1.4.186'
+	
 	//compile group: 'javax.servlet', name:'javax.servlet-api', version: '3.0.1'
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.5.1'
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.5.1'

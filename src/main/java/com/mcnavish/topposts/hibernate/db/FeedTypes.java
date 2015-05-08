@@ -8,6 +8,7 @@ import javax.persistence.Table;
 @Table(name = "feedTypes")
 public enum FeedTypes {
 	
+	UNKNOWN (0),
 	FEED_BURNER (1);
 	
 	@Id

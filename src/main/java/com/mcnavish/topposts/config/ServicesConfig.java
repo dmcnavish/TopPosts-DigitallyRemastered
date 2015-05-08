@@ -22,8 +22,25 @@ public class ServicesConfig {
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/davidmcnavish");
 		dataSource.setUsername("davidmcnavish");
+		
 		return dataSource;
 	}
+
+//--use for testing to view the in-memory h2 database
+//	@Bean
+//	public Server h2Server() throws SQLException{
+//		Server server = Server.createTcpServer("-tcp","-tcpAllowOthers","-tcpPort","9092");
+//		server.start();
+//		return server;
+//	}
+//	
+//	@Bean 
+//	public Server h2WebServer() throws SQLException{
+//		Server server = Server.createWebServer("-web","-webAllowOthers","-webPort","8082");
+//		
+//		server.start();
+//		return server;
+//	}
 	
 	@Bean
 	public PostDao postDao(){

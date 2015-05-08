@@ -3,6 +3,7 @@ package com.mcnavish.topposts.hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,10 +13,34 @@ public class HibernateUtil {
 	private static final SessionFactory sessionFactory;
 
 	static{
+		Configuration configuration = getConfiguration();
+		StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
+		sessionFactory = configuration.buildSessionFactory(builder.build());
+	}
+	
+	public static SessionFactory getSessionFactory(){
+		return sessionFactory;
+	}
+	
+	private static Configuration getConfiguration(){
+		boolean useInMemoryDb = false; //TODO: read from application property
+		
+		if(useInMemoryDb){
+			logger.debug("Using in memory db configuration");
+			return getInMemoryConfiguration();
+		}
+		else{
+			logger.debug("Using postgresql configuration");
+			return getDatabaseConfiguration();
+		}
+	}
 
+	private static Configuration getDatabaseConfiguration(){
 		Configuration configuration = new Configuration().configure();
+		
 		String connectionHost = System.getenv("OPENSHIFT_POSTGRESQL_DB_HOST");
 		String connectionPort = System.getenv("OPENSHIFT_POSTGRESQL_DB_PORT");
+		String connectionUrl = "";
 		String databaseName = "/topposts";
 		
 		if(connectionHost == null || connectionHost.isEmpty() || connectionPort == null || connectionPort.isEmpty()){
@@ -23,7 +48,7 @@ public class HibernateUtil {
 			connectionPort = "5432";
 		}
 
-		String connectionUrl = "jdbc:postgresql://" + connectionHost + ":" + connectionPort + databaseName;
+		connectionUrl = "jdbc:postgresql://" + connectionHost + ":" + connectionPort + databaseName;
 		
 		String connectionUserName = System.getenv("OPENSHIFT_POSTGRESQL_DB_USERNAME");
 		String connectionPassword  = System.getenv("OPENSHIFT_POSTGRESQL_DB_PASSWORD");
@@ -40,13 +65,20 @@ public class HibernateUtil {
 		configuration.setProperty("hibernate.connection.url", connectionUrl);
 		configuration.setProperty("hibernate.connection.username", connectionUserName);
 		configuration.setProperty("hibernate.connection.password", connectionPassword);
+		configuration.setProperty(Environment.DRIVER, "org.postgresql.Driver");
 		
-		StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
-		sessionFactory = configuration.buildSessionFactory(builder.build());
+		
+		return configuration;
 	}
 	
-	public static SessionFactory getSessionFactory(){
-		return sessionFactory;
+	private static Configuration getInMemoryConfiguration(){
+		Configuration configuration = new Configuration().configure();
+		
+		String connectionUrl = "jdbc:h2:~/mem;MODE=PostgreSQL;INIT=RUNSCRIPT FROM 'classpath:queries.sql';DATABASE_TO_UPPER=false";
+		configuration.setProperty("hibernate.connection.url", connectionUrl);
+		configuration.setProperty(Environment.DRIVER, "org.h2.Driver");
+		
+		return configuration;
 	}
 	
 }
