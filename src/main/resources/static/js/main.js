@@ -1,5 +1,10 @@
 $(document).ready(function(){
 	
+	$('.topposts-container').on("click","a", function(){
+		window.open(this.href);
+		return false;
+	});
+	
 	$('.remove-post-button').on('click', function(event){
 		var elm = event.target;
 		$(elm).parent().parent().hide();
@@ -32,7 +37,7 @@ $(document).ready(function(){
 		else{
 //			utcMillis = new Date().getTime();
 //			var currentMoment = moment.utc(utcMillis);
-			previousDate = moment().format("MMDDYYYY");
+			previousDate = moment().subtract(1, 'days').format("MMDDYYYY");
 		}
 		
 		window.location.href = '/?date=' + previousDate;
@@ -44,14 +49,20 @@ $(document).ready(function(){
 		if(currentDate){
 			var currentMoment = moment(currentDate, 'MMDDYYYY');
 			var nextMoment = currentMoment.add(1, 'days');
-			nextDate = nextMoment.format("MMDDYYYY");
+			if( nextMoment.isAfter(moment().startOf('day')) || nextMoment.isSame(moment().startOf('day')) ){
+				window.location.href = '/';
+			}
+			else{
+				nextDate = nextMoment.format("MMDDYYYY");
+				window.location.href = '/?date=' + nextDate;
+			}
 		}
 		else{
 			//can't see the future, the button shouldn't be visible
 			return;
 		}
 		
-		window.location.href = '/?date=' + nextDate;
+		
 	});
 	
 	//-----------------Utils start----------------------//
