@@ -48,8 +48,13 @@
 			<div class='topposts-container'>
 				<div class='row'>
 					<div th:each="post : ${posts}" class='col-xs-12 single-dock-container text-left'>
-						<div class='col-xs-12 text-right'>
-							<span class='feed-name' th:text="${post.feed.name}"></span>
+						<div class='col-xs-4'>
+							<div class='ribbon left_ribbon'>
+								<span th:text="${post.feed.name}"></span>
+							</div>
+						</div>
+						<div class='col-xs-8 text-right'>
+							<span class='glyphicon glyphicon-remove remove-post-button'></span>
 						</div>
 						<div class='col-xs-12'>
 							<h3><a th:href="${post.url}" th:text="${post.title}"></a></h3>

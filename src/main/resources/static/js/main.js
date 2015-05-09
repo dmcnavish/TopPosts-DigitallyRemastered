@@ -1,5 +1,10 @@
 $(document).ready(function(){
 	
+	$('.remove-post-button').on('click', function(event){
+		var elm = event.target;
+		$(elm).parent().parent().hide();
+	});
+	
 	$('.show-more-content').on('click', function(event){
 		var elm = event.target;
 		
