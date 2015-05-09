@@ -57,12 +57,12 @@ public class ViewController {
 		return mav;
 	}
 	
-	@RequestMapping("/process")
-	public String processFeeds() throws Exception{
-		
-		feedService.processFeeds();
-		
-		return "success";
-	}
+//	@RequestMapping("/process")
+//	public String processFeeds() throws Exception{
+//		
+//		feedService.processFeeds();
+//		
+//		return "success";
+//	}
 	
 }
