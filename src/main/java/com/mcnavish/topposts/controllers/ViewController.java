@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.mcnavish.topposts.domain.Post;
+import com.mcnavish.topposts.scraper.IHeartQuotesScraper;
 import com.mcnavish.topposts.services.FeedService;
 import com.mcnavish.topposts.services.PostService;
 
@@ -44,9 +45,13 @@ public class ViewController {
 		DateTime startDate = endDate.minusDays(1).withTimeAtStartOfDay();
 		
 		List<Post> posts = postService.listTopPosts(startDate, endDate);
-
+		
+		String quote = IHeartQuotesScraper.getQuote();
+		
 		ModelAndView mav = new ModelAndView("layout");
 		mav.addObject("posts", posts);
+		mav.addObject("quote", quote);
+		
 
 		logger.debug("Total posts found: " + posts.size());
 		return mav;
