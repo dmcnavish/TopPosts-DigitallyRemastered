@@ -38,6 +38,7 @@ body {
   	padding-right: 10px;
   	padding-bottom: 10px;
 	font-weight:bold;
+	font-family: 'Special Elite', cursive;
 }
 
 h4{
@@ -45,6 +46,10 @@ h4{
 }
 
 .navbar a{
+	font-family: 'Special Elite', cursive;
+}
+
+.navigate-posts-button{
 	font-family: 'Special Elite', cursive;
 }
 
