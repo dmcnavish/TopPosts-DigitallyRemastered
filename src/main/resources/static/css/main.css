@@ -113,7 +113,7 @@ div.left_ribbon::before{
 div.left_ribbon::after{
 	display: block;
 	width: 6px;
-	height: 44px;
+	height: 100%;
 	position: absolute;
 	bottom: 3px;
 	right: -1px;
