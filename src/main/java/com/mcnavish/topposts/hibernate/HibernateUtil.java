@@ -23,11 +23,11 @@ public class HibernateUtil {
 	}
 	
 	private static Configuration getConfiguration(){
-		boolean useInMemoryDb = false; //TODO: read from application property
+		boolean useEmbeddedDb = true; //TODO: read from application property
 		
-		if(useInMemoryDb){
+		if(useEmbeddedDb){
 			logger.debug("Using in memory db configuration");
-			return getInMemoryConfiguration();
+			return getEmbeddedConfiguration();
 		}
 		else{
 			logger.debug("Using postgresql configuration");
@@ -71,7 +71,7 @@ public class HibernateUtil {
 		return configuration;
 	}
 	
-	private static Configuration getInMemoryConfiguration(){
+	private static Configuration getEmbeddedConfiguration(){
 		Configuration configuration = new Configuration().configure();
 		
 		String connectionUrl = "jdbc:h2:~/mem;MODE=PostgreSQL;INIT=RUNSCRIPT FROM 'classpath:queries.sql';DATABASE_TO_UPPER=false";
