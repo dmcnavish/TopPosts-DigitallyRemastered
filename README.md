@@ -9,6 +9,7 @@ To build the project:
 On the live server, the application uses PostgreSQl, but for local development, the project uses an embedded H2 database.
 
 To start the project locally:
+
 ```gradlew bootrun```
 
 The application  is scheduled to run a job nightly to get the top posts. To populate the database manually outside of the schedule, use jconsole to connect to the running application and execute the process with the following MBean:
